@@ -1,0 +1,21 @@
+plugins {
+    id 'scala'
+}
+
+group 'net.study.functional'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // https://mvnrepository.com/artifact/org.scala-lang/scala-library
+    implementation group: 'org.scala-lang', name: 'scala-library', version: '2.12.16'
+
+}
+
+test {
+    useJUnitPlatform()
+}
