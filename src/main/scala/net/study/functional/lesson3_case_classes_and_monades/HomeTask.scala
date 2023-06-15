@@ -3,7 +3,7 @@ package net.study.functional.lesson3_case_classes_and_monades
 object HomeTask extends App {
 
   // if sum not submitted, precise in payment service. In case not found remove from final report.
-  // if tax sum is not assigned calculate it(add  20%) (minimal tax free sum for calculation = 100 or reversal payments are tax free)
+  // if tax sum is not assigned calculate it(20%) (minimal tax free sum for calculation = 100 or reversal payments are tax free)
   // if desc is empty default value will be "technical"
   // dublicates must be removed
   // get method is not allowed, use for comprehension in main calculation method
