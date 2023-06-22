@@ -1,5 +1,9 @@
 package net.study.functional.lesson3_case_classes_and_monades
 
+import net.study.functional.lesson3_case_classes_and_monades.HomeTask.PaymentCenter.getPaymentSum
+
+import scala.language.postfixOps
+
 object HomeTask extends App {
 
   // if sum not submitted, precise in payment service. In case not found remove from final report.
@@ -30,7 +34,22 @@ object HomeTask extends App {
     PaymentInfoDto(4, Some("customerC"), Some(1000), Some(200), None)
   )
 
+  def filterObject = (l: Long) => l > 100
 
+  def computeTaxSum(sumToTax: Long): Option[Long] = Some(sumToTax) filter filterObject map (_ * 20 / 100) orElse Some(0)
+  def correctPayment(id: Int, p: Option[Long]): Option[Long] = p orElse getPaymentSum(id)
+  def correctTax(tax: Option[Long], sum: Long): Option[Long] = tax orElse computeTaxSum(sum)
+  def correctDesc(desc: Option[String]): Option[String] = desc.orElse(Some("technical"))
 
+  def correctPaymentInfo(paymentInfoDto: PaymentInfoDto): Option[PaymentInfo] = for {
+    sumCalculated <- correctPayment(paymentInfoDto.paymentId, paymentInfoDto.sum)
+    taxSum <- correctTax(paymentInfoDto.tax, sumCalculated)
+    desc <- correctDesc(paymentInfoDto.desc)
+
+  } yield PaymentInfo(paymentInfoDto.paymentId, sumCalculated, taxSum, desc)
+
+  val result: Seq[PaymentInfo] = (payments distinct) flatMap (x => correctPaymentInfo(x))
+
+  result foreach println
 
 }

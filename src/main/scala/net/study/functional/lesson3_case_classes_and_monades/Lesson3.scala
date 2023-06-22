@@ -49,10 +49,10 @@ object Lesson3 extends App {
     case None => println("to do smth none")
   }
 
- /* val result = maybeInt2.getOrElse({
-    println("Calculate alternative")
-    1
-  })*/
+  /* val result = maybeInt2.getOrElse({
+     println("Calculate alternative")
+     1
+   })*/
 
 
 }
