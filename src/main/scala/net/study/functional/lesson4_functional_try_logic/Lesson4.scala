@@ -1,6 +1,7 @@
 package net.study.functional.lesson4_functional_try_logic
 
-import java.io.Closeable
+import net.study.functional.RichEither
+
 import scala.language.postfixOps
 import scala.util.control.Exception.{Catch, allCatch, catching}
 import scala.util.{Failure, Success, Try}
@@ -78,7 +79,6 @@ object Lesson4 extends App {
 
   //val specialCatcherResult: Try[String] = specialCatcher withTry riskyGetMethod(true)
 
-  def usingSource[A, R <: Closeable](closeable: R)(body: R => A): A = try body(closeable) finally closeable.close()
 
   val eitherRight: Either[String, Int] = Right(1)
 
@@ -86,17 +86,19 @@ object Lesson4 extends App {
 
   val anotherRight: Either[String, Int] = Right(4)
 
-  val pr =  eitherLeft.left.map(_ => 0)
+  val pr = eitherLeft.left.map(_ => 0)
 
   val eitherComputeResult = (for {
     r1 <- eitherRight
-    r2 <- eitherLeft
+    r2 <- eitherLeft orElse Right(8L)
     r3 <- anotherRight
   } yield r1 + r2 + r3) match {
     case Left(x)         => x
     case Right(intValue) => intValue
   }
 
+
+  println(">>>>>> " + eitherComputeResult)
 
 
 }
