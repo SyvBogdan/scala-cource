@@ -1,7 +1,7 @@
 package net.study.functional.lesson4_functional_try_logic
 
-import net.study.functional.lesson4_functional_try_logic.Lesson4.{NetworkException, usingSource, usingSourceWithFinally}
-import net.study.functional.usingSourceWithFinally
+import net.study.functional.lesson4_functional_try_logic.Lesson4.{NetworkException}
+import net.study.functional.{usingSource, usingSourceWithFinally}
 
 import scala.io.BufferedSource
 import scala.io.Source._
