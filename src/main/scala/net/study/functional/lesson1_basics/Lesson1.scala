@@ -29,16 +29,16 @@ object Lesson1 {
       () => random
     }
 
-    /*    println(generateUUIDFunc())
-        println(generateUUIDFunc())*/
+        println(generateUUIDFunc())
+        println(generateUUIDFunc())
 
     def generateUUID: () => UUID = {
       val random = UUID.randomUUID()
       () => random
     }
 
-    /*    println(generateUUID())
-        println(generateUUID())*/
+        println(generateUUID())
+        println(generateUUID())
 
 
     lazy val myLazyString: String = {
