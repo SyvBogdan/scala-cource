@@ -32,13 +32,22 @@ object HomeTask extends App {
     PaymentInfoDto(8, Some("customerG"), Some(-400), None, Some("roll back transaction")),
     PaymentInfoDto(9, Some("customerH"), None, None, Some("some payment")),
     PaymentInfoDto(4, Some("customerC"), Some(1000), Some(200), None)
-  )
+    )
 
   def filterObject = (l: Long) => l > 100
 
   def computeTaxSum(sumToTax: Long): Option[Long] = Some(sumToTax) filter filterObject map (_ * 20 / 100) orElse Some(0)
-  def correctPayment(id: Int, p: Option[Long]): Option[Long] = p orElse getPaymentSum(id)
+  //def correctPayment(id: Int, p: Option[Long]): Option[Long] = p orElse getPaymentSum(id)
+
+  val correctPayment = (id: Int, p: Option[Long]) => {
+    println("call correctPayment")
+    p orElse getPaymentSum(id)
+  }
+
+  println("correctPayment initialization")
+
   def correctTax(tax: Option[Long], sum: Long): Option[Long] = tax orElse computeTaxSum(sum)
+
   def correctDesc(desc: Option[String]): Option[String] = desc.orElse(Some("technical"))
 
   def correctPaymentInfo(paymentInfoDto: PaymentInfoDto): Option[PaymentInfo] = for {

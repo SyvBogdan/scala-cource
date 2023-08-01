@@ -1,8 +1,15 @@
 package net.study
 
 import java.io.Closeable
+import java.util.Date
 
-package object functional {
+package object functional{
+
+  type MyGlobalType = Long
+
+  implicit val myGlobalString = "Hello!"
+
+  implicit def myGlobalTime = new Date()
 
   implicit class RichEither[L, R](either: Either[L, R]) {
 
@@ -17,6 +24,4 @@ package object functional {
       finallyBlock
       closeable.close()
     }
-
-
 }

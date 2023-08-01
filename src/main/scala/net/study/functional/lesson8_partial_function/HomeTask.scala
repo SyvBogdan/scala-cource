@@ -1,5 +1,7 @@
 package net.study.functional.lesson8_partial_function
 
+import net.study.functional.lesson8_partial_function.HomeTask.SecurityServer.generatePaymentToken
+
 import scala.annotation.tailrec
 import scala.language.postfixOps
 import scala.util.Random
@@ -66,7 +68,7 @@ object HomeTask extends App {
     }
 
     protected def send(payment: PaymentRequest, token: PaymentToken): PaymentResponse = payment.tempCode match {
-      case c if c >= 300 => PaymentResponse(500, geographicalPriority)
+      case c if c >= 300   => PaymentResponse(500, geographicalPriority)
       case c if c % 2 == 0 => PaymentResponse(200, geographicalPriority)
       case c if c % 2 != 0 => PaymentResponse(400, geographicalPriority)
 
@@ -182,7 +184,69 @@ object HomeTask extends App {
 
   /////////////////////////////Implementation///////////////////////////////////////
 
+  val defaultPaymentDomain: PaymentDomain = {
+    case failRequest => PaymentResult(failRequest, PaymentResponse(-1, -1))
+  }
 
+  val defaultPostPaymentDomain: PostPaymentDomain = {
+    case notProcessedResult => PaymentStatus(notProcessedResult.request, Default)
+  }
 
+  def f(msisdn: String, tempCode: Int, product: Product) = generatePaymentToken(msisdn, product, tempCode)
+
+  def createPaymentDomain(paymentService: PaymentService): PaymentDomain = {
+    case payment if paymentService.canProcess(payment.productType) =>
+      val curr                         = (f _).curried
+      val tokenProvider: TokenProvider = curr(payment.msisdn)(payment.tempCode) //generatePaymentToken(payment.msisdn, _: ProductType, payment.tempCode)
+      PaymentResult(payment, paymentService.withdrawPayment(payment, tokenProvider))
+  }
+
+  def createPostPaymentDomain(postPaymentService: PostPaymentService): PostPaymentDomain = {
+    case paymentResult if postPaymentService.codesToProcess.contains(paymentResult.response.code) =>
+      // any this domain business logic
+      PaymentStatus(paymentResult.request, postPaymentService.processResult(paymentResult))
+  }
+
+  def postPaymentService(status: Status, codes: Set[Int]): PostPaymentService = new PostPaymentService {
+    override val serviceStatus : Status   = status
+    override val codesToProcess: Set[Int] = codes
+  }
+
+  val paymentDomain: PaymentDomain = chainDomains(serverPool sortBy (_.geographicalPriority) map createPaymentDomain toList, defaultPaymentDomain)
+
+  val postPaymentDomain: PostPaymentDomain = chainDomains(statusCodes.map { s =>
+    val (status, codes)                                                     = s
+    val subPostPaymentDomain: PartialFunction[PaymentResult, PaymentStatus] = createPostPaymentDomain(postPaymentService(status, codes))
+    subPostPaymentDomain
+  }.toList, defaultPostPaymentDomain)
+
+  val paymentFlow: BusinessDomain[PaymentRequest, PaymentStatus] = paymentDomain andThen postPaymentDomain
+
+  val result: Seq[PaymentStatus] = payments map paymentFlow
+
+  result foreach println
+
+  /*
+
+    val digitComputeLongFunc: PartialFunction[Int, Int] = new PartialFunction[Int, Int] {
+      override def isDefinedAt(x: Int): Boolean = x > 10
+      override def apply(v1: Int): Int = v1 * 2
+    }
+
+    val digitComputeShortFunc: PartialFunction[Int, Int] = {
+      case d if d > 10 => d * 2
+    }
+
+    val result = Try{
+      val myFlow = digitComputeLongFunc orElse digitComputeShortFunc
+      if(myFlow.isDefinedAt(2)) myFlow(2) else -1
+
+    }
+    val result2 = Try((digitComputeShortFunc orElse digitComputeLongFunc).apply(2))
+
+    println(result)
+    println(result2)
+  */
 
 }
+
