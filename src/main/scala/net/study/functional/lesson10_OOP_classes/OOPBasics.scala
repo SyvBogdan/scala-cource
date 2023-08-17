@@ -53,6 +53,9 @@ object Orderings {
 
 class Person private(var name: String, val age: Int, var isMarriage: Boolean) {
 
+  def this() {
+    this("John Smith", 23, true)
+  }
 
   private def this(name: String, age: Int) {
     this(name, age, {
@@ -63,6 +66,8 @@ class Person private(var name: String, val age: Int, var isMarriage: Boolean) {
 
   override def toString: String = s"Person: $name, $age"
 }
+
+
 
 object Person {
   private def isMarriageDefined(age : Int) = age > 18

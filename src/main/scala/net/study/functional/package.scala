@@ -3,7 +3,7 @@ package net.study
 import java.io.Closeable
 import java.util.Date
 
-package object functional{
+package object functional {
 
   type MyGlobalType = Long
 
@@ -24,4 +24,11 @@ package object functional{
       finallyBlock
       closeable.close()
     }
+
+
+  type Analisys = {
+
+    def createBusinessLogic: Unit
+
+  }
 }

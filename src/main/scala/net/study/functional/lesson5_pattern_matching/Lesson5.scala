@@ -6,7 +6,7 @@ object Lesson5 extends App {
 
   val intSeq: Seq[Int] = (1 to 10) toList
 
-  1 // Simple constant pattern matching
+   // Simple constant pattern matching
 
   val maybeInt: AnyVal = true
 
@@ -18,7 +18,7 @@ object Lesson5 extends App {
   }
 
 
-  2 // case class unapply
+   // case class unapply
 
   case class Person(name: String, age: Int)
 
@@ -29,7 +29,7 @@ object Lesson5 extends App {
     case _                 =>
   }
 
-  3 // Tuple matching
+   // Tuple matching
 
   val simpleTuplePerson = ("Andriy", 22)
 
@@ -48,7 +48,7 @@ object Lesson5 extends App {
   }
 
 
-  4 // seq pattern matching
+   // seq pattern matching
 
   val stringSeqEmpty: List[String] = Nil
 
