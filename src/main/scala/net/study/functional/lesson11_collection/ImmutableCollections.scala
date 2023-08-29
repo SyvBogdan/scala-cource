@@ -1,6 +1,8 @@
 package net.study.functional.lesson11_collection
 
 import scala.collection.immutable.{LinearSeq, SortedSet}
+import scala.language.postfixOps
+import scala.util.Random
 
 object ImmutableCollections extends App {
 
@@ -47,6 +49,25 @@ object ImmutableCollections extends App {
   val dif       = seq diff indexedSeq // leave everything that make difference left collection from right
   val intersect = seq intersect indexedSeq // leave everything that common for both collections
 
+  val collectResult    = seq.collect {
+    case digit if digit % 2 == 0 => digit.toString
+  }
+  val mapperWithFilter = seq.withFilter(_ % 2 == 0).map(_.toString)
+
+  // ZIP
+
+  val digits  = List(1, 2, 3)
+  val letters = List("a", "b", "c", "d")
+
+
+  val result = digits zip letters
+
+  println(result)
+
+  val resultAll = digits.zipAll(letters, -1, "default")
+
+  println(resultAll)
+
   // aggregator
   // reduce operation
 
@@ -58,10 +79,12 @@ object ImmutableCollections extends App {
 
   seq reduceRight aggregator // dangerous collection must be not empty
 
+  // you can use this methods with suffix Option (reduceOption, reduceLeftOption...) for safety
+
   val acc: Int = 100
   print(s"start left with $acc")
-  val leftResult = seq.foldLeft(acc) ((acc, next) => {
-    print( " + " + next)
+  val leftResult = seq.foldLeft(acc)((acc, next) => {
+    print(" + " + next)
     acc + next
   })
   println(" = " + leftResult)
@@ -74,5 +97,55 @@ object ImmutableCollections extends App {
     acc + next
   })
   println(" = " + rightResult)
+
+  // mkString
+
+  val mkStringResult = seq.mkString(",")
+
+  println(mkStringResult)
+
+
+  // splitters
+
+  // partition
+  val intSeq      = Random.shuffle((1 to 10 toList))
+  val (even, odd) = intSeq.partition(_ % 2 == 0)
+
+  // group by
+  val groupResult = intSeq.groupBy(next => if (next % 2 == 0) "even" else "odd")
+
+  //span
+
+  val (left, right) = intSeq.span(_ <= 5)
+
+
+  /// Lazy
+
+  // stream
+  lazy val fibbonachi: Stream[Int] = 0 #:: 1 #:: fibbonachi.zip(fibbonachi.tail).map { tuple =>
+    val (prev, next) = tuple
+   // println(s"calculate sum $prev + $next")
+    prev + next
+  }
+
+  val third = fibbonachi(3)
+
+  val OnceMoreThird = fibbonachi(3)
+
+  val OnceMoreThird2 = fibbonachi(2)
+
+  val OnceMoreThird3 = fibbonachi(2)
+
+  // view
+
+  val view = List(1,2,3).view map { x =>
+    println(s"View member calculation: $x")
+    x * 2
+  }
+
+ println(view.headOption)
+ println(view.headOption)
+
+
 
 }
