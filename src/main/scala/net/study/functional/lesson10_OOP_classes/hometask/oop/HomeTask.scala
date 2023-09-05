@@ -1,5 +1,7 @@
 package net.study.functional.lesson10_OOP_classes.hometask.oop
 
+import net.study.functional.lesson10_OOP_classes.hometask.oop.errors.{Error, ValidationError}
+
 import java.util.Date
 import scala.language.postfixOps
 
@@ -14,6 +16,14 @@ object HomeTask extends App {
     3) implement processor(only simple stub which immediately returns OK answer)
     Write test for validator and mapper components
    */
+
+  val error1: ValidationError = null
+
+  val error2: ValidationError = null
+
+  val composedError: Error = error1 + error2
+
+  composedError.errorMessage == "errorMessage : [ field1,field2,....], errorMessage2: [field3,field4]"
 
 }
 
