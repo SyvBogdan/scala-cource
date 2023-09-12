@@ -1,30 +1,30 @@
 package net.study.functional.lesson10_OOP_classes.hometask.oop
 
-import net.study.functional.lesson10_OOP_classes.hometask.oop.errors.{Error, ValidationError}
+import net.study.functional.lesson10_OOP_classes.hometask.oop.handler.SignUpHandler
+import net.study.functional.lesson10_OOP_classes.hometask.oop.mappers.Mappers
+import net.study.functional.lesson10_OOP_classes.hometask.oop.request.SignUpRequest
+import net.study.functional.lesson10_OOP_classes.hometask.oop.response.SignUpResponse
+import net.study.functional.lesson10_OOP_classes.hometask.oop.services.{HashService, LoginService}
+
 
 import java.util.Date
 import scala.language.postfixOps
 
 object HomeTask extends App {
 
+  val signUpRequest = SignUpRequest(name = Option("Bogdan"), surname = Option("Syvulyak"), login = Option("BSyvulyak"), pass = Option("jrfgadkjv.ke"), msisdn = Option("637425766"))
 
-  /*
-    Using all this infrustructure and fraims implement handler for SignUp operation
-    1) validation, using rules declare in scala doc above SignUpRequest. All validation errors must be gathered together
-    with help of ValidationError
-    2) implement mapper for converting it to common SignUpDto and hash password
-    3) implement processor(only simple stub which immediately returns OK answer)
-    Write test for validator and mapper components
-   */
+  val route = new SignUpRoute(new LoginService, new HashService)
 
-  val error1: ValidationError = null
+  route.signUpRoute(signUpRequest)
 
-  val error2: ValidationError = null
+  class SignUpRoute(override val loginService: LoginService, override val hashService: HashService)
+    extends SignUpHandler with Mappers
+    {
+    // do any other business logic you want
+    def signUpRoute(signUpRequest: SignUpRequest): Either[errors.Error, SignUpResponse] = handle(signUpRequest)
 
-  val composedError: Error = error1 + error2
-
-  composedError.errorMessage == "errorMessage : [ field1,field2,....], errorMessage2: [field3,field4]"
-
+  }
 }
 
 

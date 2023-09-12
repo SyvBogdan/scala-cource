@@ -1,7 +1,5 @@
 package net.study.functional.lesson10_OOP_classes.hometask.oop.errors
 
-
-// here you can declare your errors
 sealed trait Error {
   def errorMessage: String
 }
@@ -21,7 +19,34 @@ case object EmptyStringError extends Error {
   override val errorMessage: String = "emptyError"
 }
 
-// base trait for errors with merging effect
+case object AbsentError extends Error {
+  override def errorMessage: String = "absentParamError"
+}
+
+case object ListEmptyError extends Error {
+  override def errorMessage: String = "listEmptyError"
+}
+
+case object ListEmptyNodesError extends Error {
+  override def errorMessage: String = "listEmptyNodesError"
+}
+
+case object NotLatinError extends Error {
+  override def errorMessage: String = "notLatinError"
+}
+
+case object NotLatinOrDigitError extends Error {
+  override def errorMessage: String = "notLatinOrDigitError"
+}
+
+case object WrongMsisdnError extends Error {
+  override def errorMessage: String = "wrongMsisdnError"
+}
+
+case object DuplicateLoginError extends Error {
+  override def errorMessage: String = "duplicateLoginError"
+}
+
 trait CombinedError[T <: CombinedError[T]] extends Error {
 
   def errors: Map[String, Error]
@@ -30,7 +55,6 @@ trait CombinedError[T <: CombinedError[T]] extends Error {
 
 }
 
-//
 case class ValidationError(errors: Map[String, Error]) extends CombinedError[ValidationError] {
   require(errors.nonEmpty)
 
@@ -39,19 +63,15 @@ case class ValidationError(errors: Map[String, Error]) extends CombinedError[Val
   def this(param: String, error: Error) = this(Map(param -> error))
 
   // TODO
-  /**
-   * implement this
-   * This method has to merge this validationError with @param error
-   * @return new merged combined Validation Error
-   */
-  override def +(error: ValidationError): ValidationError = ???
+  // implement this one
+  override def +(error: ValidationError): ValidationError = this.copy(errors = this.errors ++ error.errors)
 
   // TODO
-  /**
-   * implement this
-   * errorMessage using next pattern: -  errorMessage : [ field1,field2,....], errorMessage2: [field3,field4]
-   * @return merged combined Validation Error
-   */
-  override val errorMessage: String = ???
+  // implement this  errorMessage using next pattern: errorMessage : [ field1,field2,....], errorMessage2: [field3,field4]
+  override val errorMessage: String = ((errors groupBy (_._2.errorMessage)) map { node =>
+    val (message, meta) = node
+    s"$message : [${meta.keys mkString spliterator}]"
+  }) mkString spliterator
 
+  //override def +(error: CombinedError[ValidationError]): ValidationError = ???
 }

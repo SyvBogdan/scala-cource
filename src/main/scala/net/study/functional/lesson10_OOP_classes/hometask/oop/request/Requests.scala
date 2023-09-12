@@ -12,7 +12,16 @@ import java.util.Date
  */
 case class Experience(organisation: Option[String], position: Option[String], from: Option[Date], to: Option[Date])
 
+/**
+ * @param login    must be not empty
+ * @param password must be right
+ * */
+
 ////Requests
+case class SignInRequest(
+                          login: Option[String],
+                          password: Option[String]
+                        )
 
 /**
  * @param name    must be not empty, latin symbols only
@@ -26,16 +35,6 @@ case class SignUpRequest(
                           login: Option[String],
                           pass: Option[String],
                           msisdn: Option[String]
-                        )
-
-/**
- * @param login    must be not empty
- * @param password must be right
- * */
-
-case class SignInRequest(
-                          login: Option[String],
-                          password: Option[String]
                         )
 
 /**
