@@ -25,3 +25,5 @@ trait Mappers {
     case Success(opt) => opt getOrElse (throw new RuntimeException("lack of params"))
   }
 }
+
+object MapperStrategy extends Mappers

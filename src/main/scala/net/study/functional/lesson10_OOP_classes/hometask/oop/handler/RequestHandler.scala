@@ -24,7 +24,7 @@ trait RequestHandler[R, DTO, RESP] {
 
 trait SignUpHandler
   extends RequestHandler[SignUpRequest, SignUpDto, SignUpResponse]
-    with SignUpValidator
     with SignUpMapper
     with SignUpProcessor
+    with SignUpValidator
 
