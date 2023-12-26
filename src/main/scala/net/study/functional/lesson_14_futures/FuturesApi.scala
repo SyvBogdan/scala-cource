@@ -96,6 +96,8 @@ object FuturesApi extends App {
 
   def alternativeAsyncApi(error: Throwable) = Future(111)
 
+  def alternativeAsyncApiStr(error: Throwable) = Future("Alternative")
+
   val recoveredWithAnotherContext = myTaskWithException recoverWith {
     case e: Throwable =>
 
@@ -112,6 +114,65 @@ object FuturesApi extends App {
     case Success(value)     => Success(value + "!!!!!")
     case Failure(exception) => Failure(new RuntimeException("Failed"))
   }
+
+  val transformWithSuccessfully: Future[String] = helloWorld transformWith {
+    case Success(value) => Future.successful(value)
+    case Failure(ex)    => alternativeAsyncApiStr(ex)
+  }
+
+  // andThen
+
+  def writeSuccessMetrics() = println("Success metric")
+
+  def writeFailMetrics() = println("Failed metric")
+
+  def someAsyncMethod: Future[Int] = alternativeContextWithException
+
+  val futureWithSideEffect: Future[Int] = someAsyncMethod.andThen {
+    case Failure(exception) => writeFailMetrics()
+    case Success(value)     => writeSuccessMetrics()
+  } recoverWith {
+    case e: Throwable => alternativeAsyncApi(e)
+  }
+
+  val resultWithSideEffect = Await.result(futureWithSideEffect, 3 seconds)
+
+  println(s"resultWithSideEffect : $resultWithSideEffect")
+
+  /// combinators futures
+
+  // zip
+
+  val futureAction1 = Future(100)
+  val futureAction2 = Future(200)
+  val futureAction3 = Future(300)
+  val futureAction4 = Future(400)
+  val futureAction5 = Future(500)
+
+  val sequenceFuture: List[Future[Int]] = List(alternativeContextWithException, futureAction1, futureAction2, futureAction3, futureAction4)
+
+
+  val seqInt = Seq(100, 200, 300, 400, 500)
+
+  def multiply(value: Int, turn: Int): Future[Int] = Future(value * turn)
+
+  val futureZip: Future[(Int, Int)] = futureAction1 zip futureAction2
+
+  val sumFunc: (Int, Int) => Int = (l: Int, r: Int) => l + r
+
+  val futureZipWith: Future[Int] = (futureAction1 zipWith futureAction2)(sumFunc)
+
+  val sequenceResult: Future[Seq[Int]] = Future.sequence(Seq(futureAction1, futureAction2, futureAction3, futureAction4, futureAction5))
+
+  val reduced: Future[Int] = sequenceResult map (_.sum)
+
+  val traverseResult: Future[Seq[Int]] = Future.traverse(seqInt)(x => multiply(x, 1))
+
+  val findFirst: Future[Option[Int]] = Future.find(sequenceFuture)(_ > 100)
+
+  println(Await.result(findFirst, 3 seconds))
+
+  
 
 
 }

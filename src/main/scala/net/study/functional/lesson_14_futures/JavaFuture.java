@@ -1,13 +1,10 @@
 package net.study.functional.lesson_14_futures;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class JavaFuture {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         //// completable already completed! apply ()
         final CompletableFuture<String> completableFuture = CompletableFuture.completedFuture("Hello");
@@ -20,6 +17,12 @@ public class JavaFuture {
         //// example of writable future or Promise in scala api
         final CompletableFuture<String> notCompletableFuture = new CompletableFuture<>();
 
+
+        final CompletableFuture<Void> allOf = CompletableFuture.allOf(CompletableFuture.runAsync(() -> {
+           throw  new RuntimeException("Exception");
+        }),completableFuture);
+
+        System.out.println(allOf.get());
 
     }
 
